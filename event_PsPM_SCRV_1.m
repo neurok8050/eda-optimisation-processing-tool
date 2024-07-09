@@ -1,11 +1,9 @@
 % Author : Claudéric DeRoy
-% Last date of modification : 26/06/2024
+% Last date of modification : 9/07/2024
 % Goal : this is another example of what sort of code to write to mark
 % event according to an experiment
 
-% TODO:
-% make it more usable, remove complex data structure, use vector instead
-function events_PsPM_SCRV_1 = event_PsPM_SCRV_1(trialInfo, epoch, ...
+function events_PsPM_SCRV_1 = event_PsPM_SCRV_1(trialNb, trial, epoch, ...
     triggerFileName, varargin)
 %     Function to code trial from the PsPM-SCRV 1 dataset. The experiment was to
 %     show aversive and nonaversive picture from the International Affective 
@@ -13,12 +11,17 @@ function events_PsPM_SCRV_1 = event_PsPM_SCRV_1(trialInfo, epoch, ...
 %     (ISI) so it was a 2x3 experimental design. Aversive trial were marker as 0
 %     and neutral trial as 1. This function is necessary if you use the
 %     PsPM-SCRV 1 dataset if not you can ignore it.
-%     @return: the epoch pass has argument will be modify. Each trial will
-%     be coded and added to the the epoch struct.
-%     @trialInfo (1x1 MATLAB struct): the structure the of the
-%     _cogent_.mat file from the open source dataset from Bach.
+%     @trialNb ([int]): vector of the trial number ([1,2, to the nth trial])
+%     @trial ([int]): vector of trial encoding, example if 1 : aversive and 0
+%     : neutral then you should have a vector looking like this [1,0,0,1,0,1]
 %     @epoch (1x1 MATLAB struct) : the output of the epochs function, look
 %     above for more information.
+%     @triggerFileName (String): path to the file containing the trial
+%     information (i.e. cogent from Bach file system). If you do not have a
+%     cogent file just pass the file name you would like to save to use
+%     later with PsPM, "onsets_" will be written in front of it
+%     @return: the epoch pass has argument will be modify. Each trial will
+%     be coded and added to the the epoch struct.
    
     artifact = varargin{1};
     fileName = extractAfter(triggerFileName, "Data/");
@@ -39,8 +42,9 @@ function events_PsPM_SCRV_1 = event_PsPM_SCRV_1(trialInfo, epoch, ...
     onsets{1,1} = [];
     onsets{1,2} = [];
     
-    trialNb = trialInfo.data(:,1); % vector of the number of the trial
-    trial = trialInfo.data(:,7);
+%     TODO: remove if it work with trialNb and trial as function parameter
+%     trialNb = trialInfo.data(:,1); % vector of the number of the trial
+%     trial = trialInfo.data(:,7);
     
     for i = 1:length(trialNb)
         if trial(i) == 0

@@ -1,8 +1,6 @@
 % Author : Claudéric DeRoy
 % Last date of modification : 26/06/2024
 
-% TODO:
-% make it more usable, remove complex data structure use vector instead
 function epochs = epoch(triggersTimeStamp, samplingRate, preTimeStart, ...
     preTimeStop, postTimeStart, postTimeStop, signal)
 %     The function creates the epochs base on the pre stimulus window you
