@@ -5,7 +5,7 @@
 
 % TODO:
 % make it more usable, remove complex data structure, use vector instead
-function events_PsPM_SCRV_4 = event_PsPM_SCRV_4(trialNb, cs, us, epoch, ...
+function events_PsPM_SCRV_4 = event_PsPM_SCRV_4(trialNb, cs, us, ...
     triggerFileName, varargin)
 %     Function to code trial from the PsPM_SCRV 4 dataset. The experiment is the
 %     same as the experiment in the PsPM-HRA_1 except that the US is a 95 dB 
@@ -26,16 +26,13 @@ function events_PsPM_SCRV_4 = event_PsPM_SCRV_4(trialNb, cs, us, epoch, ...
 %     @return: the epoch pass has argument will be modify. Each trial will
 %     be coded and added to the the epoch struct.
    
+    [filepath, name, ext] = fileparts(triggerFileName);
     artifact = varargin{1};
-    fileName = extractAfter(triggerFileName, "Data/");
-    fileName = "onsets_" + fileName;
     
     if artifact == "artifact"
-        fileName = strcat(extractBefore(triggerFileName, "Data/"), ...
-        "Data/"+"artifact_"+fileName);
+        fileName = filepath + "/artifact_" + "onsets_" + name + ext;
     else
-        fileName = strcat(extractBefore(triggerFileName, "Data/"), ...
-        "Data/"+fileName);
+        fileName = filepath + "/onsets_" + name + ext;
     end
     
     names = {};
@@ -44,6 +41,7 @@ function events_PsPM_SCRV_4 = event_PsPM_SCRV_4(trialNb, cs, us, epoch, ...
     names{1,2} = 'neutral';
     onsets{1,1} = [];
     onsets{1,2} = [];
+    epoch = [];
 
 %     TODO: remove if trialNb, cs and us work as function parameters
 %     trialNb = trialInfo.data(:,1);
@@ -52,13 +50,13 @@ function events_PsPM_SCRV_4 = event_PsPM_SCRV_4(trialNb, cs, us, epoch, ...
     
     for i = 1:length(trialNb)
         if cs(i) == 2 && us(i) == 0
-            epoch.data{5,i} = 1; % coding aversive trial as 1
+            epoch{i} = 1; % coding aversive trial as 1
             onsets{1,1} = [onsets{1,1}, trialNb(i)];
         elseif cs(i) == 1
-            epoch.data{5,i} = 0; % coding nonaversive trial as 0
+            epoch{i} = 0; % coding nonaversive trial as 0
             onsets{1,2} = [onsets{1,2}, trialNb(i)];
         else
-            epoch.data{5,i} = 2; % non-interesting stimulus
+            epoch{i} = 2; % non-interesting stimulus
         end
     end
     save(fileName, 'names', 'onsets')

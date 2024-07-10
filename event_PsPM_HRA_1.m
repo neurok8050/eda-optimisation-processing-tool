@@ -25,16 +25,13 @@ function events_PsPM_HRA_1 = event_PsPM_HRA_1(trialNb, cs, us, ....
 %     @return ([int]): vector containing the encoding for each trial coded
 %     as shown in the code.
     
+    [filepath, name, ext] = fileparts(triggerFileName);
     artifact = varargin{1};
-    fileName = extractAfter(triggerFileName, "Data/");
-    fileName = "onsets_" + fileName;
     
     if artifact == "artifact"
-        fileName = strcat(extractBefore(triggerFileName, "Data/"), ...
-        "Data/"+"artifact_"+fileName);
+        fileName = filepath + "/artifact_" + "onsets_" + name + ext;
     else
-        fileName = strcat(extractBefore(triggerFileName, "Data/"), ...
-        "Data/"+fileName);
+        fileName = filepath + "/onsets_" + name + ext;
     end
     
     names = {};
