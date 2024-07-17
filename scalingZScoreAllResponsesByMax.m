@@ -1,10 +1,10 @@
 % Author : Claudéric DeRoy
-% Last date of modification : 26/06/2024
+% Last date of modification : 17/07/2024
 
 % TO DO :
 % take out the @epoch parameter and make it more general. Maybe add vector
 % parameter of the aversive, neutral and optionally uninteresting events
-function scaledData7 = scalingZScoreAllResponsesByMax(epoch)
+function [PSs, AUCs] = scalingZScoreAllResponsesByMax(PS, AUC)
 %     The seventh rescalling method from Privratsky et al. 2020. It is the same 
 %     as the scalingZScoreAllResponses function except that it divided the 
 %     values of the vectors by their maximum value.
@@ -12,13 +12,14 @@ function scaledData7 = scalingZScoreAllResponsesByMax(epoch)
 %     @epoch (1x1 MATLAB struct) : the output of the epochs function, look
 %     bellow for more information.
     
-    maxPS = max(vertcat(epoch.data{3,:}));
-    maxAUC = max(vertcat(epoch.data{4,:}));
+    maxPS = max(PS);
+    maxAUC = max(AUC);
    
-    for i = 1:length(epoch.data)
-        epoch.data{3,i} = epoch.data{3,i} / maxPS;
-        epoch.data{4,i} = epoch.data{4,i} / maxAUC;
+    for i = 1:length(PS)
+        PS(i) = PS(i) / maxPS;
+        AUC(i) = AUC(i) / maxAUC;
     end
     
-    scaledData7 = epoch;
+    PSs = PS;
+    AUCs = AUC;
 end

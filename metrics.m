@@ -1,11 +1,10 @@
 % Author : Claudéric DeRoy
-% Last date of modification : 26/06/2024
+% Last date of modification : 17/07/2024
 % Goal : compute metrics, might be different if you want to compute
 % different metrics or compute PS and AUC differently
 
-% TODO:
-% make it more usable, remove complex data structure, use vector instead
-function metric = metrics(epoch)
+
+function [PSs, AUCs] = metrics(SOIs, baselines)
 %     This function calculates the metrics of the epochs and store those
 %     values in the epoch pass as an argument.
 %     @return: the function will modify the epoch pass as en argument by
@@ -23,18 +22,19 @@ function metric = metrics(epoch)
 %     pspm_sf_auc.m function from : 
 %     https://github.com/bachlab/PsPM/blob/develop/src/pspm_sf_auc.m
 
-    for i = 1:length(epoch.data)
-        minimum = min(epoch.data{2,i});
-        maximum = max(epoch.data{1,i});
-        minAUC = min(epoch.data{1,i});
+    PSs = [];
+    AUCs = [];
+    for i = 1:length(SOIs)
+        minimum = min(baselines{i});
+        maximum = max(SOIs{i});
+        minAUC = min(SOIs{i});
 
         ps = maximum - minimum;
 
-        auc = epoch.data{1,i} - minAUC; 
+        auc = SOIs{i} - minAUC; 
         auc = mean(auc);
 
-       epoch.data{3,i} = ps;
-       epoch.data{4,i} = auc;
+       PSs = [PSs; ps];
+       AUCs = [AUCs; auc];
     end
-    metric = epoch;
 end

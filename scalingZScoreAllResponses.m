@@ -1,10 +1,8 @@
 % Author : Claudéric DeRoy
-% Last date of modification : 26/06/2024
+% Last date of modification : 17/07/2024
 
-% TO DO :
-% take out the @epoch parameter and make it more general. Maybe add vector
-% parameter of the aversive, neutral and optionally uninteresting events
-function scaledData6 = scalingZScoreAllResponses(epoch)
+
+function [PSs, AUCs] = scalingZScoreAllResponses(PS, AUC)
 %     The sixth rescalling method from Privratsky et al. 2020. For each
 %     trial it calculates the metrics (PS, AUC) it puts it in a vector and z 
 %     score those value.
@@ -12,15 +10,15 @@ function scaledData6 = scalingZScoreAllResponses(epoch)
 %     @epoch (1x1 MATLAB struct) : the output of the epochs function, look
 %     bellow for more information.
    
-    meanPS = mean([epoch.data{3,:}]);
-    meanAUC = mean([epoch.data{4,:}]);
-    stdPS = std([epoch.data{3,:}]);
-    stdAUC = std([epoch.data{4,:}]);
+    meanPS = mean(PS);
+    meanAUC = mean(AUC);
+    stdPS = std(PS);
+    stdAUC = std(AUC);
     
-    for i = 1:length(epoch.data)
-        epoch.data{3,i} = (epoch.data{3,i} - meanPS) / stdPS;
-        epoch.data{4,i} = (epoch.data{4,i} - meanAUC) / stdAUC;
+    for i = 1:length(PS)
+        PS(i) = (PS(i) - meanPS) / stdPS;
+        AUC(i) = (AUC(i) - meanAUC) / stdAUC;
     end
-    
-    scaledData6 = epoch;
+    PSs = PS;
+    AUCs = AUC;
 end

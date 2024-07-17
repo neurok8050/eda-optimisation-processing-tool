@@ -1,12 +1,10 @@
 % Author : Claudéric DeRoy
-% Last date of modification : 26/06/2024
+% Last date of modification : 17/07/2024
 
-function epochs = epoch(triggersTimeStamp, samplingRate, preTimeStart, ...
+function [SOIs, baselines] = epoch(triggersTimeStamp, samplingRate, preTimeStart, ...
     preTimeStop, postTimeStart, postTimeStop, signal)
 %     The function creates the epochs base on the pre stimulus window you
 %     want and the post stimulus window you want.
-%     @return : 1x1 MATLAB struct with the pre stimulus epoch and the post
-%     stimulus epoch of each trial.
 %     @triggersTimeStamp ([int array]) : an array with all the time stamp in
 %     seconds of the triggers of your experiment.
 %     @samplingRate (int): the sampling of the signal you have.
@@ -23,14 +21,19 @@ function epochs = epoch(triggersTimeStamp, samplingRate, preTimeStart, ...
 %     stimulus. Example, a postTimeStop of 5 means the post stimulus window
 %     will stop 5 seconds after the stimulus appears.
 %     @signal ([int array]): the signal that you wish to epoch.
-%     
-    epoch.data = {};
-
+%     @return :
+%      @SOIs ([[int]]): list of list containing the different epochs
+%      @baselines ([[int]]): list of list containing the differents
+%      baselines
+    
 %     the first for loop creates the startTrigger (the starting time of the 
 %     trigger) which is multipled by the sampling rate so we get the exact index
 %     of the epoch then we create an empty space for the data of the epoch. The 
 %     second for loop puts all the values for the starting window time to the 
-%     length of the epoch in the initialize empty space for the epoch. 
+%     length of the epoch in the initialize empty space for the epoch.
+
+    SOI = {};
+    baseline = {};
 
     for i = 1:length(triggersTimeStamp)
         
@@ -43,19 +46,20 @@ function epochs = epoch(triggersTimeStamp, samplingRate, preTimeStart, ...
         baselineStart = (triggersTimeStamp(i) - preTimeStart) * samplingRate;
         baselineStop = (triggersTimeStamp(i) - preTimeStop) * samplingRate;
         
-        epoch.data{1,i} = []; % where the Signal Of Interest (SOI) is stored
-        epoch.data{2,i} = []; % where the baseline is stored
+        SOI{i} = []; % where the Signal Of Interest (SOI) is stored
+        baseline{i} = []; % where the baseline is stored
    
 %         the for loop who gets all the value of the SOI
         for j = startTrigger:endTrigger - 1
-            epoch.data{1,i} = [epoch.data{1,i}; signal(floor(j))];
+            SOI{i} = [SOI{i}; signal(floor(j))];
         end
 
 %         the for loop who gets all the value of the baseline
         for k = baselineStart:baselineStop - 1
-            epoch.data{2,i} = [epoch.data{2,i}; signal(floor(k))];
+            baseline{i} = [baseline{i}; signal(floor(k))];
         end
     end
-    epochs = epoch;
+    SOIs = SOI;
+    baselines = baseline;
     return
 end
